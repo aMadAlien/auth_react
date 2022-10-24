@@ -1,10 +1,11 @@
 import Login from './Login';
+import Register from './Register';
 import './App.css';
 
 function App() {
   return (
-    <div>
-      <Login />
+    <div className='App'>
+      <Register />
     </div>
   );
 }
