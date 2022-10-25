@@ -6,11 +6,13 @@ import { Link } from "react-router-dom";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
-const REGISTER_URL = '/register';
+const REGISTER_URL = '/users';
 
 const Register = () => {
     const userRef = useRef();
     const errRef = useRef();
+
+    const [existingUsers, setExistingUsers] = useState([]);
 
     const [user, setUser] = useState('');
     const [validName, setValidName] = useState(false);
@@ -56,8 +58,15 @@ const Register = () => {
             return;
         }
 
+        
         try {
-            const response = await axios.post(REGISTER_URL,
+            const getData = await axios.get(REGISTER_URL)
+            .then(res => setExistingUsers(res.data));
+            const isRegistered = (userName) => {
+                return existingUsers.find(i => i.user === userName) !== -1
+            }
+
+            const postData = await axios.post(REGISTER_URL,
                 JSON.stringify({ user, pwd }), 
                 {
                     headers: { 'Content-Type': 'application/json'},
@@ -83,7 +92,7 @@ const Register = () => {
         {success ? (
             <section>
                 <h1>Success!</h1>
-                <p><a href="#">Sign In</a></p>
+                <p><Link to="/login">Sign In</Link></p>
             </section>
         ) : ( <section>
                 <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
